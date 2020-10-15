@@ -76,3 +76,30 @@ void MainWindow::on_pushButton_3_clicked()
         imwrite(nombre.toLatin1().data(), img);
     }
 }
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    VideoCapture cap;
+    if (ui->radioButton->isChecked()) {
+        QString nombre = QFileDialog::getOpenFileName();
+        cap.open(nombre.toLatin1().data());
+    } else {
+        // Abrimos con la cámara
+        cap.open(0);
+    }
+
+    if (!cap.isOpened()) {
+        return;
+    }
+
+    // Con la llamada waitKey se refresca la imagen
+    while(waitKey(1) == -1) {
+        Mat frame;
+        if (!cap.read(frame)) {
+            break;
+        }
+        imshow("Frame", frame);
+    }
+
+    destroyWindow("Frame");
+}
