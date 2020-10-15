@@ -47,6 +47,7 @@ void MainWindow::on_pushButton_clicked()
             namedWindow("Imagen", 0);
             imshow("Imagen", img);
             setMouseCallback("Imagen", mousecb);
+            ui->pushButton_3->setEnabled(true);
         }
     }
 }
@@ -62,5 +63,16 @@ void MainWindow::on_pushButton_2_clicked()
     if (color.isValid()) {
         // Convertimos el QColor a Scalar y se lo asignamos
         colorPincel = CV_RGB(color.red(), color.green(), color.blue());
+    }
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    // Devuelve el nombre donde el usuario quiere guardar su creación
+    QString nombre = QFileDialog::getSaveFileName();
+
+    if (!nombre.isEmpty()) {
+        // Guarda la imagen
+        imwrite(nombre.toLatin1().data(), img);
     }
 }
