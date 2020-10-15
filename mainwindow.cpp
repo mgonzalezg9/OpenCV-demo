@@ -10,6 +10,7 @@ using namespace cv;
 Mat img;
 int radioPincel = 10;
 Scalar colorPincel = CV_RGB(0, 255, 0); // Inicializado a verde por defecto
+VideoCapture cap;
 
 void mousecb(int event, int x, int y, int flags, void * param)
 {
@@ -79,6 +80,12 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_4_clicked()
 {
+    QString nombreSalida = QFileDialog::getSaveFileName();
+    if (nombreSalida.isEmpty()) {
+        return;
+    }
+    VideoWriter vw;
+
     VideoCapture cap;
     if (ui->radioButton->isChecked()) {
         QString nombre = QFileDialog::getOpenFileName();
@@ -92,14 +99,46 @@ void MainWindow::on_pushButton_4_clicked()
         return;
     }
 
+    Mat img;
+    cap.read(img);
+    int FPS = 30;
+    vw.open(nombreSalida.toLatin1().data(), VideoWriter::fourcc('D', 'I', 'V', 'X'), FPS, img.size());
+
     // Con la llamada waitKey se refresca la imagen
     while(waitKey(1) == -1) {
         Mat frame;
         if (!cap.read(frame)) {
             break;
         }
+        vw.write(frame);
+        namedWindow("Frame", 0);
         imshow("Frame", frame);
     }
 
     destroyWindow("Frame");
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    QString nombre = QFileDialog::getOpenFileName();
+    if (!nombre.isEmpty()) {
+        cap.open(nombre.toLatin1().data());
+        if (cap.isOpened()) {
+            Mat img;
+            cap >> img;
+            namedWindow("Video", 0);
+            imshow("Video", img);
+            int nFrames = cap.get(CAP_PROP_FRAME_COUNT);
+            ui->horizontalSlider_2->setMaximum(nFrames-1); // Los frame van de 0 a n - 1
+        }
+    }
+}
+
+void MainWindow::on_horizontalSlider_2_valueChanged(int value)
+{
+    cap.set(CAP_PROP_POS_FRAMES, value);
+    Mat img;
+    cap >> img;
+    namedWindow("Video", 0);
+    imshow("Video", img);
 }
