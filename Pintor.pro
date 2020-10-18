@@ -43,3 +43,6 @@ LIBS += -L"C:\OpenCV\OpenCV4.1.1G\lib"\
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    recursos.qrc
